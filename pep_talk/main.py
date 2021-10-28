@@ -1,18 +1,43 @@
-from pep_talk.pep_parts import FIRST_PART, SECOND_PART, THIRD_PART, FOURTH_PART
+import argparse
+
+from pep_talk.pep_parts import PARTS
 from colored import stylize
 import colored
 import random
 
 
 def print_pep():
-    message = f'{FIRST_PART[random.randint(0, len(FIRST_PART) - 1)]} ' + \
-        f'{SECOND_PART[random.randint(0, len(SECOND_PART) - 1)]} ' + \
-        f'{THIRD_PART[random.randint(0, len(THIRD_PART) - 1)]} ' + \
-        f'{FOURTH_PART[random.randint(0, len(FOURTH_PART) - 1)]} '
-    mark_up = colored.fg('red_1') + colored.attr('bold') + colored.bg('white')
-    print(stylize(f'{message}', mark_up))
+    args = setup_args()
+
+    message: str = ''
+    mark_up: str = ''
+
+    for values in PARTS:
+        message += values[random.randint(0, len(values) - 1)]
+
+    if args.fg:
+        mark_up += colored.fg(args.fg)
+    if args.bg:
+        mark_up += colored.bg(args.bg)
+    if args.attr:
+        mark_up += colored.attr(args.attr)
+
+    if mark_up:
+        print(stylize(f'{message}', mark_up))
+    else:
+        print(message)
 
 
-# Press the green button in the gutter to run the script.
+def setup_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description='Output some pep! Colors are '
+                    'defined here: https://pypi.org/project/colored/')
+
+    parser.add_argument('--fg', help='foreground colour')
+    parser.add_argument('--attr', help='text attributes colour, bold etd')
+    parser.add_argument('--bg', help='background colour')
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
     print_pep()
